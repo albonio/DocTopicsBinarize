@@ -1,0 +1,6 @@
+/home/apadilla/jre1.8.0_40/bin/java -Xmx100524m -Xms1512m -cp . DocTopicsBinarize ~/doctopics/DocTopicsBinarize/output ~/doctopics/DocTopicsBinarize/input PlanEstatalBIO.doc_topics 1
+
+/home/apadilla/jre1.8.0_40/bin/java -Xmx100524m -Xms10512m -cp . DocTopicsBinarize /usr/local/share/nas/david/wiki/ ~/wiki/ wiki_pruned.doc_topics 1
+
+en doctopics/DocTopicsBinarize/bin
+/home/apadilla/jre1.8.0_40/bin/java -Xmx100524m -Xms10512m -cp . DocTopicsBinarize /usr/local/share/nas/david/wiki/t300/ /usr/local/share/nas/david/wiki/t300/ wiki_pruned.doc_topics 1
