@@ -113,7 +113,7 @@ public class DocTopicsBinarize {
             docTopicValues = new float[numdocs][numtopics];
             docNames = new String[numdocs];  
             
-            System.out.println("Loading doc-topics, numdocs: " + numdocs + ", numtopics: " + numtopics);
+            System.out.println("\nLoading doc-topics, numdocs: " + numdocs + ", numtopics: " + numtopics);
 
             // load topics
         	if(complete_topic_format){
@@ -424,7 +424,7 @@ public class DocTopicsBinarize {
     	
     	int maxtopic = 0;
         while ((line = reader.readLine()) != null) {
-        	if(lines%1000==0){
+        	if(lines%1000==0 && lines > 0){
         		System.out.print(".");
         	}
         	if(lines%50000==0){
