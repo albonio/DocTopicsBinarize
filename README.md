@@ -1,5 +1,5 @@
 # DocTopicsBinarize
-Lightweight packing of doc-topics output file from mallet (Topic modelling)<br/>
+Lightweight packing of doc-topics output file from Mallet (Topic modelling)<br/>
 
 CLI params<br/>
 -o output dir<br/>
