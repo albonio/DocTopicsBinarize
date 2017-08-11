@@ -8,6 +8,13 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
  
  
  
@@ -34,43 +41,58 @@ public class DocTopicsBinarize {
 
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
         simbolos.setDecimalSeparator('.');    
         df4 = new DecimalFormat("#.####", simbolos);
-
-//        deleteFolder(new File(outputDir), false);
-//        File outputDirFile = new File(outputDir);
-//        outputDirFile.mkdir();
         
-        if (args.length == 4) {
-        	outputDir = args[0];    
-        	inputDir  = args[1];	
-
-        	fileName  = args[2];
-        	int complete_topic_format_int = 0;
-            try {
-            	complete_topic_format_int = Integer.parseInt(args[3]);
-            } catch (NumberFormatException e) {
-                System.err.println("Argument " + args[2] + " must be an integer.");
-                System.exit(1);
-            }
-            if(complete_topic_format_int > 0){
-            	complete_topic_format = true;
-            } else {
-            	complete_topic_format = false;
-            }
+        
+        // parse CLI options
+        Options options = createCLIoptions();
+        
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse( options, args);
+        
+        
+        // outputDir, get -o option value
+        String outputDircli = cmd.getOptionValue("o");
+        if(outputDircli == null) {
+        	System.out.println("No output dir specified. Default: " + outputDir);
         } else {
-        	usage();
-        	System.exit(1);
+        	System.out.println("Output dir specified: " + outputDircli);
+        	outputDir = outputDircli;
         }
         
-
-    	
-    	
-                 
+        // outputDir, get -o option value
+        String inputDircli = cmd.getOptionValue("i");
+        if(inputDircli == null) {
+        	 System.out.println("No output dir specified. Default: " + outputDir);
+        } else {
+        	System.out.println("Output dir specified: " + inputDircli);
+        	inputDir = inputDircli;
+        }
+        
+        // doc_topics, get -d option value
+        String docTopicscli = cmd.getOptionValue("d");
+        if(docTopicscli == null) {
+        	 System.out.println("No DocTopics file specified.");
+        	 usage(options);
+        	 System.exit(1);
+        } else {
+        	System.out.println("DocTopics file specified: " + docTopicscli);
+        	fileName = docTopicscli;
+        }
+        
+        // doc_topics, get -d option value
+        String no_complete_topic_format_cli = cmd.getOptionValue("nc");
+        if(no_complete_topic_format_cli != null) {
+        	System.out.println("Specified no complete topic format.");
+     		complete_topic_format = false;
+        } 
+        
+             
         try {
-        	// inspect topics
+        	// inspect doc topic file
         	if(complete_topic_format){
         		inspectTopicFile_CompleteFormat(fileName);
         	} else {
@@ -112,18 +134,30 @@ public class DocTopicsBinarize {
             
             
             System.out.println("Bin topic file saved");
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-	private static void usage() {
-		System.out.println("arg0: outputDir");
-		System.out.println("arg1: inputDir");
-		System.out.println("arg2: fileName");
-		System.out.println("arg3: complete_topic_format: [0|1]");
+	private static Options createCLIoptions() {
+		//-o output -i input -d cordis-projects_100.doc_topics
+		
+		// create Options object
+		Options options = new Options();
+
+		// add options
+		options.addOption("o", true, "output directory");
+		options.addOption("i", true, "input directory");
+		options.addOption("d", true, "doctopics file");
+		options.addOption("nc", false, "non compressed doctopics file format (default include only non null doc topic values).");
+
+		return options;
+	}
+
+	private static void usage(Options options) {
+		// automatically generate the help statement
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp( "DocTopicsBinarize", options );
 	}
 
 	private static void saveCleanedDocTopics(float[][] docTopicValuesCleanned, String[] docNames) {
@@ -239,16 +273,7 @@ public class DocTopicsBinarize {
 				num_zeros++;
 			}
 		}
-		//System.out.println("num_zeros: " + num_zeros);
-		
-//		// complete rest
-//		float rest = (float)(num_zeros*min)/(float)(numtopics - num_zeros);
-//		for(int i=0; i < numtopics; i++){
-//			if(docTopicValues[i] > min){
-//				docTopicVector[i]+=rest;
-//			}
-//		}
-		
+
 		// complete rest
 		float rest = 1;
 		for(int i=0; i < numtopics; i++){
@@ -260,13 +285,6 @@ public class DocTopicsBinarize {
 				docTopicVector[i]+=rest;
 			}
 		}		
-		
-//		// check norm
-//		float norm = 0f;
-//		for(int i=0; i < numtopics; i++){
-//			norm += docTopicVector[i];
-//		}		
-//		System.out.println("norm: " + norm);
 		
 		return docTopicVector;
 	}
